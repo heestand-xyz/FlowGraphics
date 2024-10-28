@@ -21,10 +21,15 @@ let package = Package(
     targets: [
         .target(
             name: "FlowGraphics",
-            dependencies: ["AsyncGraphics", "FlowGraphicsCore"],
+            dependencies: ["AsyncGraphics", "CoreFlowGraphics"],
             swiftSettings: [.interoperabilityMode(.Cxx)]),
         .target(
-            name: "FlowGraphicsCore"),
+            name: "CoreFlowGraphics",
+            linkerSettings: [
+                .linkedFramework("Metal"),
+                .linkedFramework("QuartzCore"),
+                .linkedFramework("Foundation"),
+            ]),
         .testTarget(
             name: "FlowGraphicsTests",
             dependencies: ["FlowGraphics"],
