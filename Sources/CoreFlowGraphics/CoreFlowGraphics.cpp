@@ -6,38 +6,100 @@
 //
 
 #include "CoreFlowGraphics.h"
+#include <vector>
 #include <mdspan>
+#include <iostream>
 
 CoreFlowGraphics::CoreFlowGraphics() {}
 
-void CoreFlowGraphics::flow(void* data, size_t size, size_t width, size_t height) {
+double checkContrast(const FGColor& leading, const FGColor& trailing) {
+    double red = double(leading.red) / 255 - double(trailing.red) / 255;
+    double green = double(leading.green) / 255 - double(trailing.green) / 255;
+    double blue = double(leading.blue) / 255 - double(trailing.blue) / 255;
+    double alpha = double(leading.alpha) / 255 - double(trailing.alpha) / 255;
+    return std::sqrt(red * red + green * green + blue * blue + alpha * alpha);
+}
+
+void CoreFlowGraphics::floodFill(void* graphic,
+                                 size_t length,
+                                 FGSize resolution,
+                                 FGColor color,
+                                 FGPoint location,
+                                 double threshold) {
+    if (location.x < 0 || location.x >= resolution.width || location.y < 0 || location.y >= resolution.height) {
+        return;
+    }
+    std::cout << "Will flood fill at: " << location.x << ", " << location.y << std::endl;
+
     using byte = unsigned char;
-    constexpr size_t channels = 4; // Assuming RGBA format
+    constexpr size_t channels = 4;
     
-    // Verify that the data size matches the expected size
-    size_t expectedSize = width * height * channels;
-    if (size < expectedSize) {
-        // Handle error: data size is smaller than expected
+    size_t expectedLength = resolution.count() * channels;
+    if (length < expectedLength) {
         return;
     }
     
-    byte* pixels = static_cast<byte*>(data);
+    byte* pixels = static_cast<byte*>(graphic);
     
-    constexpr size_t channel_extent = channels; // Static extent for channels
+    constexpr size_t channel_extent = channels;
     using extents_t = std::extents<size_t, std::dynamic_extent, std::dynamic_extent, channel_extent>;
     using mdspan_type = std::mdspan<byte, extents_t>;
     
-    mdspan_type imageSpan(pixels, height, width);
+    mdspan_type image(pixels, resolution.height, resolution.width);
     
-    for (size_t y = 0; y < height; ++y) {
-        for (size_t x = 0; x < width; ++x) {
-            byte& r = imageSpan[y, x, 0];
-            byte& g = imageSpan[y, x, 1];
-            byte& b = imageSpan[y, x, 2];
-            byte& a = imageSpan[y, x, 3];
-            r = r;
-            g = g / 2;
-            b = 0;
+    size_t seedRed = image[location.y, location.x, 0];
+    size_t seedGreen = image[location.y, location.x, 1];
+    size_t seedBlue = image[location.y, location.x, 2];
+    size_t seedAlpha = image[location.y, location.x, 3];
+    FGColor seedColor = FGColor(seedRed, seedGreen, seedBlue, seedAlpha);
+
+    using visited_extents_t = std::extents<size_t, std::dynamic_extent, std::dynamic_extent>;
+    using visited_mdspan_type = std::mdspan<bool, visited_extents_t>;
+
+    auto flatVisited = std::make_unique<bool[]>(resolution.count());
+
+    std::fill_n(flatVisited.get(), resolution.count(), false);
+
+    visited_mdspan_type visited(flatVisited.get(), resolution.height, resolution.width);
+
+    const int dx[4] = {0, 0, -1, 1};
+    const int dy[4] = {-1, 1, 0, 0};
+
+    visited[location.y, location.x] = true;
+
+    std::vector<std::pair<int, int>> pixelQueue;
+    pixelQueue.push_back({location.x, location.y});
+
+    while (!pixelQueue.empty()) {
+        auto [x, y] = pixelQueue.front();
+        pixelQueue.erase(pixelQueue.begin());
+
+        image[y, x, 0] = color.red;
+        image[y, x, 1] = color.green;
+        image[y, x, 2] = color.blue;
+        image[y, x, 3] = color.alpha;
+
+        for (int i = 0; i < 4; ++i) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx >= 0 && nx < resolution.width && ny >= 0 && ny < resolution.height && !visited[ny, nx]) {
+
+                size_t sampleRed = image[ny, nx, 0];
+                size_t sampleGreen = image[ny, nx, 1];
+                size_t sampleBlue = image[ny, nx, 2];
+                size_t sampleAlpha = image[ny, nx, 3];
+                FGColor sampleColor = FGColor(sampleRed, sampleGreen, sampleBlue, sampleAlpha);
+
+                double contrast = checkContrast(seedColor, sampleColor);
+
+                if (contrast < threshold) {
+                    pixelQueue.push_back({nx, ny});
+                    visited[ny, nx] = true;
+                }
+            }
         }
     }
+    
+    std::cout << "Did flood fill at: " << location.x << ", " << location.y << std::endl;
 }

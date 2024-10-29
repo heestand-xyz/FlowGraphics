@@ -12,8 +12,29 @@ import CoreFlowGraphics
 
 extension Graphic {
     
-    public func flow() async throws -> Graphic {
+    public func floodFill(
+        color: PixelColor,
+        at location: CGPoint,
+        threshold: CGFloat = 0.5
+    ) async throws -> Graphic {
         precondition(bits == ._8)
+        
+        let fgResolution = FGSize(
+            width: texture.width,
+            height: texture.height
+        )
+        
+        let fgColor = FGColor(
+            red: UInt8(color.red * 255),
+            green: UInt8(color.green * 255),
+            blue: UInt8(color.blue * 255),
+            alpha: UInt8(color.alpha * 255)
+        )
+        
+        let fgLocation = FGPoint(
+            x: Int(location.x),
+            y: Int(location.y)
+        )
         
         let pixelByteCount = texture.width * texture.height * 4
         guard let buffer = Renderer.metalDevice.makeBuffer(length: pixelByteCount, options: .storageModeShared) else {
@@ -47,7 +68,14 @@ extension Graphic {
         let dataLength = buffer.length
 
         var cfgs = CoreFlowGraphics()
-        cfgs.flow(dataPointer, dataLength, Int(width), Int(height))
+        cfgs.floodFill(
+            dataPointer,
+            dataLength,
+            fgResolution,
+            fgColor,
+            fgLocation,
+            threshold
+        )
         
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(
             pixelFormat: bits.metalPixelFormat(),

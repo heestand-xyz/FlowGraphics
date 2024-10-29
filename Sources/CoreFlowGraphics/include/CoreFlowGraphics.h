@@ -12,14 +12,30 @@
 
 #include <string>
 
-//struct Color {
-//    uint8_t red, green, blue, alpha;
-//};
+struct FGColor {
+    uint8_t red, green, blue, alpha;
+};
+
+struct FGPoint {
+    size_t x, y;
+};
+
+struct FGSize {
+    size_t width, height;
+    constexpr size_t count() const {
+        return width * height;
+    };
+};
 
 class CoreFlowGraphics {
 public:
     CoreFlowGraphics();
-    void flow(void* data, size_t size, size_t width, size_t height);
+    void floodFill(void* data,
+                   size_t size,
+                   FGSize resolution,
+                   FGColor color,
+                   FGPoint location,
+                   double threshold);
 };
 
 #pragma GCC visibility pop
