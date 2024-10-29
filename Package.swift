@@ -25,10 +25,8 @@ let package = Package(
             swiftSettings: [.interoperabilityMode(.Cxx)]),
         .target(
             name: "CoreFlowGraphics",
-            linkerSettings: [
-                .linkedFramework("Metal"),
-                .linkedFramework("QuartzCore"),
-                .linkedFramework("Foundation"),
+            cxxSettings: [
+                .unsafeFlags(["-std=c++2b"])
             ]),
         .testTarget(
             name: "FlowGraphicsTests",

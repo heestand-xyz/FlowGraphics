@@ -6,22 +6,38 @@
 //
 
 #include "CoreFlowGraphics.h"
-#include <iostream>
-#include <array>
+#include <mdspan>
 
 CoreFlowGraphics::CoreFlowGraphics() {}
 
-Color CoreFlowGraphics::flow(void* texturePointer) {
-    auto* texture = static_cast<MTL::Texture*>(texturePointer);
-
-    if (texture->pixelFormat() != MTL::PixelFormatRGBA8Unorm) {
-        return {0, 0, 0, 0};
+void CoreFlowGraphics::flow(void* data, size_t size, size_t width, size_t height) {
+    using byte = unsigned char;
+    constexpr size_t channels = 4; // Assuming RGBA format
+    
+    // Verify that the data size matches the expected size
+    size_t expectedSize = width * height * channels;
+    if (size < expectedSize) {
+        // Handle error: data size is smaller than expected
+        return;
     }
     
-    std::array<uint8_t, 4> pixelData = {0, 0, 0, 0};
-    MTL::Region region = MTL::Region::Make2D(0, 0, 1, 1);
+    byte* pixels = static_cast<byte*>(data);
     
-    texture->getBytes(&pixelData, 4, region, 0);
+    constexpr size_t channel_extent = channels; // Static extent for channels
+    using extents_t = std::extents<size_t, std::dynamic_extent, std::dynamic_extent, channel_extent>;
+    using mdspan_type = std::mdspan<byte, extents_t>;
     
-    return {pixelData[0], pixelData[1], pixelData[2], pixelData[3]};
+    mdspan_type imageSpan(pixels, height, width);
+    
+    for (size_t y = 0; y < height; ++y) {
+        for (size_t x = 0; x < width; ++x) {
+            byte& r = imageSpan[y, x, 0];
+            byte& g = imageSpan[y, x, 1];
+            byte& b = imageSpan[y, x, 2];
+            byte& a = imageSpan[y, x, 3];
+            r = r;
+            g = g / 2;
+            b = 0;
+        }
+    }
 }
