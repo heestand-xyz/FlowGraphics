@@ -36,6 +36,11 @@ public:
                    FGColor color,
                    FGPoint location,
                    double threshold);
+//    void monochromeFloodFill(void* data,
+//                             size_t size,
+//                             FGSize resolution,
+//                             FGPoint location,
+//                             double threshold);
 };
 
 #pragma GCC visibility pop

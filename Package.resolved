@@ -1,13 +1,13 @@
 {
-  "originHash" : "800959d7066df4b606cf505bfa0d2a0183bc8da464314c7bc635893ec9a2b505",
+  "originHash" : "a6a60f8d6f444504be13f12f8483cc91741f5dd918563afd19d538a33b769ae5",
   "pins" : [
     {
       "identity" : "coregraphicsextensions",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/heestand-xyz/CoreGraphicsExtensions",
       "state" : {
-        "revision" : "e46bb3c71226d7b1cafe9739f9dd4b46caf04e7c",
-        "version" : "1.9.0"
+        "revision" : "a95735b2522f6e2ba9ab8a59fbf742e1723212ed",
+        "version" : "2.0.0"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/heestand-xyz/PixelColor",
       "state" : {
-        "revision" : "985d12c8339bc0ae08803a0abde32c2e4696c4ce",
-        "version" : "2.2.2"
+        "revision" : "2e3cf16dd01a1a0ed3ded435ab0875c3f20ad3bc",
+        "version" : "3.0.1"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/heestand-xyz/SpatialExtensions",
       "state" : {
-        "revision" : "a047b4fb938b6bffed9c6777d6b566fc2cb4ba25",
-        "version" : "0.1.3"
+        "revision" : "a088ae60a41c4842aadcaa53802cff0cfedb68e3",
+        "version" : "1.0.0"
       }
     },
     {
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/heestand-xyz/TextureMap",
       "state" : {
-        "revision" : "bc8f1cb56c1b558eeebb1ae15c2e24c04bfb6ead",
-        "version" : "1.0.4"
+        "revision" : "c73e99f8116f045a115f9fb5929d46911e817007",
+        "version" : "2.0.1"
       }
     },
     {
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/heestand-xyz/VideoFrames",
       "state" : {
-        "revision" : "3de476e958b765699eb2f98ca42336acfc262f49",
-        "version" : "1.1.1"
+        "revision" : "340c4b6803e92fca85d6a5698800fb6f3a949b09",
+        "version" : "2.0.0"
       }
     }
   ],

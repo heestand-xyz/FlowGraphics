@@ -9,6 +9,7 @@
 #include <vector>
 #include <mdspan>
 #include <iostream>
+#include <cmath>
 
 CoreFlowGraphics::CoreFlowGraphics() {}
 
@@ -29,7 +30,7 @@ void CoreFlowGraphics::floodFill(void* graphic,
     if (location.x < 0 || location.x >= resolution.width || location.y < 0 || location.y >= resolution.height) {
         return;
     }
-    std::cout << "Will flood fill at: " << location.x << ", " << location.y << std::endl;
+//    std::cout << "Will flood fill at: " << location.x << ", " << location.y << std::endl;
 
     using byte = unsigned char;
     constexpr size_t channels = 4;
@@ -100,6 +101,80 @@ void CoreFlowGraphics::floodFill(void* graphic,
             }
         }
     }
-    
-    std::cout << "Did flood fill at: " << location.x << ", " << location.y << std::endl;
+//    std::cout << "Did flood fill at: " << location.x << ", " << location.y << std::endl;
 }
+
+//void CoreFlowGraphics::monochromeFloodFill(void* graphic,
+//                                           size_t length,
+//                                           FGSize resolution,
+//                                           FGPoint location,
+//                                           double threshold) {
+//    if (location.x < 0 || location.x >= resolution.width || location.y < 0 || location.y >= resolution.height) {
+//        return;
+//    }
+//    
+//    using byte = unsigned char;
+//    
+//    size_t expectedLength = resolution.count();
+//    if (length < expectedLength) {
+//        return;
+//    }
+//    
+//    byte* pixels = static_cast<byte*>(graphic);
+//    
+//    using extents_t = std::extents<size_t, std::dynamic_extent, std::dynamic_extent>;
+//    using mdspan_type = std::mdspan<byte, extents_t>;
+//    
+//    mdspan_type image(pixels, resolution.height, resolution.width);
+//    
+//    size_t seed = image[location.y, location.x];
+//
+//    using visited_extents_t = std::extents<size_t, std::dynamic_extent, std::dynamic_extent>;
+//    using visited_mdspan_type = std::mdspan<bool, visited_extents_t>;
+//
+//    auto flatVisited = std::make_unique<bool[]>(resolution.count());
+//
+//    std::fill_n(flatVisited.get(), resolution.count(), false);
+//
+//    visited_mdspan_type visited(flatVisited.get(), resolution.height, resolution.width);
+//
+//    const int dx[4] = {0, 0, -1, 1};
+//    const int dy[4] = {-1, 1, 0, 0};
+//
+//    visited[location.y, location.x] = true;
+//
+//    std::vector<std::pair<int, int>> pixelQueue;
+//    pixelQueue.push_back({location.x, location.y});
+//
+//    while (!pixelQueue.empty()) {
+//        auto [x, y] = pixelQueue.front();
+//        pixelQueue.erase(pixelQueue.begin());
+//
+//        image[y, x] = 255;
+//
+//        for (int i = 0; i < 4; ++i) {
+//            int nx = x + dx[i];
+//            int ny = y + dy[i];
+//
+//            if (nx >= 0 && nx < resolution.width && ny >= 0 && ny < resolution.height && !visited[ny, nx]) {
+//
+//                size_t sample = image[ny, nx];
+//                
+//                double contrast = abs(double(seed) - double(sample)) / 255.0;
+//
+//                if (contrast < threshold) {
+//                    pixelQueue.push_back({nx, ny});
+//                    visited[ny, nx] = true;
+//                }
+//            }
+//        }
+//    }
+//
+//    for (size_t y = 0; y < resolution.height; ++y) {
+//        for (size_t x = 0; x < resolution.width; ++x) {
+//            if (!visited[y, x]) {
+//                image[y, x] = 0;
+//            }
+//        }
+//    }
+//}
