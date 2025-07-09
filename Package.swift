@@ -25,6 +25,7 @@ let package = Package(
             swiftSettings: [.interoperabilityMode(.Cxx)]),
         .target(
             name: "CoreFlowGraphics",
+            publicHeadersPath: "include",
             cxxSettings: [
                 .headerSearchPath("include"),
                 .unsafeFlags(["-std=c++2b"])
