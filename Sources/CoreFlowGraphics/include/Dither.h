@@ -18,11 +18,13 @@ public:
     void floydSteinberg(void* data,
                         size_t size,
                         FGSize resolution,
-                        int64_t levels);
+                        int64_t levels,
+                        bool monochrome);
     void atkinson(void* data,
                   size_t size,
                   FGSize resolution,
-                  int64_t levels);
+                  int64_t levels,
+                  bool monochrome);
 };
 
 #pragma GCC visibility pop

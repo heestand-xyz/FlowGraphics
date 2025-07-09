@@ -13,7 +13,8 @@ import CoreFlowGraphics
 extension Graphic {
     
     public func ditherFloydSteinberg(
-        levels: Int = 2
+        levels: Int = 2,
+        monochrome: Bool = true
     ) async throws -> Graphic {
         
         let fgResolution = FGSize(
@@ -27,13 +28,15 @@ extension Graphic {
                 data,
                 length,
                 fgResolution,
-                Int64(min(max(levels, 2), 256))
+                Int64(min(max(levels, 2), 256)),
+                monochrome
             )
         }
     }
     
     public func ditherAtkinson(
-        levels: Int = 2
+        levels: Int = 2,
+        monochrome: Bool = true
     ) async throws -> Graphic {
         
         let fgResolution = FGSize(
@@ -47,7 +50,8 @@ extension Graphic {
                 data,
                 length,
                 fgResolution,
-                Int64(min(max(levels, 2), 256))
+                Int64(min(max(levels, 2), 256)),
+                monochrome
             )
         }
     }

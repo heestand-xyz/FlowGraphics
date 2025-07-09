@@ -26,6 +26,7 @@ let package = Package(
         .target(
             name: "CoreFlowGraphics",
             cxxSettings: [
+                .headerSearchPath("include"),
                 .unsafeFlags(["-std=c++2b"])
             ]),
         .testTarget(

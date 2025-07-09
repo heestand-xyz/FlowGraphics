@@ -10,8 +10,8 @@
 
 #pragma GCC visibility push(default)
 
-#include <cstdint>
-#include <cstddef>
+#include <stdint.h>
+#include <stddef.h>
 
 struct FGColor {
     uint8_t red, green, blue, alpha;
