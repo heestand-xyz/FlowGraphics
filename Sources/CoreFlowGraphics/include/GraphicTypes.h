@@ -17,6 +17,10 @@ struct FGColor {
     uint8_t red, green, blue, alpha;
 };
 
+struct FGFloatColor {
+    float red, green, blue, alpha;
+};
+
 struct FGPoint {
     size_t x, y;
 };

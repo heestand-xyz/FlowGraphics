@@ -116,7 +116,7 @@ extension Graphic {
         return try .texture(newTexture)
     }
     
-    private func buffer() async throws -> MTLBuffer {
+    func buffer() async throws -> MTLBuffer {
         guard bits == ._8 else {
             throw EffectError.requires8BitGraphic
         }
