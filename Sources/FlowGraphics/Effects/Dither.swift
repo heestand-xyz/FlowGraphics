@@ -17,20 +17,23 @@ extension Graphic {
         monochrome: Bool = true
     ) async throws -> Graphic {
         
-        let fgResolution = FGSize(
-            width: texture.width,
-            height: texture.height
-        )
-        
-        return try await effect { data, length in
-            var dither = Dither()
-            dither.floydSteinberg(
-                data,
-                length,
-                fgResolution,
-                Int64(min(max(levels, 2), 256)),
-                monochrome
+        try await rowAlign { graphic in
+            
+            let fgResolution = FGSize(
+                width: graphic.texture.width,
+                height: graphic.texture.height
             )
+            
+            return try await graphic.effect { data, length in
+                var dither = Dither()
+                dither.floydSteinberg(
+                    data,
+                    length,
+                    fgResolution,
+                    Int64(min(max(levels, 2), 256)),
+                    monochrome
+                )
+            }
         }
     }
     
@@ -39,20 +42,23 @@ extension Graphic {
         monochrome: Bool = true
     ) async throws -> Graphic {
         
-        let fgResolution = FGSize(
-            width: texture.width,
-            height: texture.height
-        )
-        
-        return try await effect { data, length in
-            var dither = Dither()
-            dither.atkinson(
-                data,
-                length,
-                fgResolution,
-                Int64(min(max(levels, 2), 256)),
-                monochrome
+        try await rowAlign { graphic in
+            
+            let fgResolution = FGSize(
+                width: graphic.texture.width,
+                height: graphic.texture.height
             )
+            
+            return try await graphic.effect { data, length in
+                var dither = Dither()
+                dither.atkinson(
+                    data,
+                    length,
+                    fgResolution,
+                    Int64(min(max(levels, 2), 256)),
+                    monochrome
+                )
+            }
         }
     }
 }

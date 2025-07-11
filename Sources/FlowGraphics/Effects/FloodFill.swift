@@ -29,39 +29,42 @@ extension Graphic {
         threshold: CGFloat = 0.5
     ) async throws -> Graphic {
         
-        let fgResolution = FGSize(
-            width: texture.width,
-            height: texture.height
-        )
-        
         let fgColor = FGColor(
-            red: UInt8(color.red * 255),
-            green: UInt8(color.green * 255),
-            blue: UInt8(color.blue * 255),
-            alpha: UInt8(color.opacity * 255)
+            red: UInt8(min(max(color.red, 0.0), 1.0) * 255),
+            green: UInt8(min(max(color.green, 0.0), 1.0) * 255),
+            blue: UInt8(min(max(color.blue, 0.0), 1.0) * 255),
+            alpha: UInt8(min(max(color.opacity, 0.0), 1.0) * 255)
         )
         
-        guard Int(location.x) >= 0, Int(location.x) < texture.width,
-              Int(location.y) >= 0, Int(location.y) < texture.height else {
-            throw FloodFillError.pixelLocationOutOfBounds
-        }
-        
-        let fgLocation = FGPoint(
-            x: Int(location.x),
-            y: Int(location.y)
-        )
-        
-        return try await effectWithOriginal(backgroundColor: backgroundColor) { original, target, length in
-            var floodFill = FloodFill()
-            floodFill.floodFill(
-                original,
-                target,
-                length,
-                fgResolution,
-                fgColor,
-                fgLocation,
-                threshold
+        return try await rowAlign { graphic in
+            
+            let fgResolution = FGSize(
+                width: graphic.texture.width,
+                height: graphic.texture.height
             )
+            
+            guard Int(location.x) >= 0, Int(location.x) < graphic.texture.width,
+                  Int(location.y) >= 0, Int(location.y) < graphic.texture.height else {
+                throw FloodFillError.pixelLocationOutOfBounds
+            }
+            
+            let fgLocation = FGPoint(
+                x: Int(location.x),
+                y: Int(location.y)
+            )
+            
+            return try await graphic.effectWithOriginal(backgroundColor: backgroundColor) { original, target, length in
+                var floodFill = FloodFill()
+                floodFill.floodFill(
+                    original,
+                    target,
+                    length,
+                    fgResolution,
+                    fgColor,
+                    fgLocation,
+                    threshold
+                )
+            }
         }
     }
 }

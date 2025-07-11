@@ -37,6 +37,20 @@ extension Graphic {
         }
     }
     
+    public func rowAlign(
+        every pixelsPerRow: Int = 4,
+        _ effect: (_ graphic: Graphic) async throws -> Graphic,
+    ) async throws -> Graphic {
+        if texture.width % pixelsPerRow == 0 {
+            return try await effect(self)
+        } else {
+            let resizedResolution = CGSize(width: ceil(width / CGFloat(pixelsPerRow)) * CGFloat(pixelsPerRow), height: height)
+            let resizedGraphic = try await resized(to: resizedResolution, placement: .stretch)
+            let effectedGraphic = try await effect(resizedGraphic)
+            return try await effectedGraphic.resized(to: resolution, placement: .stretch)
+        }
+    }
+    
     public func effect(
         _ edit: (_ data: UnsafeMutableRawPointer, _ length: Int) -> Void,
     ) async throws -> Graphic {
@@ -137,12 +151,12 @@ extension Graphic {
             destinationBytesPerImage: bytesPerRow * texture.height
         )
         blitEncoder.endEncoding()
-        commandBuffer.commit()
         
         await withCheckedContinuation { continuation in
             commandBuffer.addCompletedHandler { _ in
                 continuation.resume()
             }
+            commandBuffer.commit()
         }
         
         return buffer
