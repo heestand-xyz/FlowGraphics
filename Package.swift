@@ -16,7 +16,7 @@ let package = Package(
             targets: ["FlowGraphics"]),
     ],
     dependencies: [
-        .package(path: "../AsyncGraphics")
+        .package(url: "https://github.com/heestand-xyz/AsyncGraphics", from: "3.2.1"),
     ],
     targets: [
         .target(
